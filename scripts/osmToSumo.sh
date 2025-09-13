@@ -1,39 +1,48 @@
 #!/bin/bash
 set -e
 
+# Check input
 if [ $# -ne 1 ]; then
-  echo "Usage: $0 <input.osm>"
-  exit 1
+    echo "Usage: $0 <input.osm>"
+    exit 1
 fi
 
 NAME=$1
 
-# Convert OSM to SUMO network
+# Ensure required directories exist
+mkdir -p data/nets data/trips data/routes data/sumocfgs
+
+echo ">=> Converting OSM to SUMO network..."
+NET_PATH=$(realpath "data/nets/$NAME.net.xml")
 netconvert --osm-files "data/maps/$NAME.osm" \
-           --output-file "data/nets/$NAME.net.xml" \
+           --output-file "$NET_PATH" \
            --tls.guess --tls.join \
            --geometry.remove \
            --roundabouts.guess \
            --ramps.guess
 
-# Generate random trips
+echo ">=> Generating random trips..."
+TRIP_PATH=$(realpath "data/trips/$NAME.trips.xml")
 python3 $SUMO_HOME/tools/randomTrips.py \
-        -n "data/nets/$NAME.net.xml" \
-        -o "data/trips/$NAME.trips.xml" \
-        -p 5
+        -n "$NET_PATH" \
+        -o "$TRIP_PATH" \
+        -p 5 \
+        --random
 
-# Generate routes
-duarouter --net-file "data/nets/$NAME.net.xml" \
-          --route-files "data/trips/$NAME.trips.xml" \
-          --output-file "data/routes/$NAME.rou.xml"
+echo ">=> Generating routes from trips..."
+ROUTE_PATH=$(realpath "data/routes/$NAME.rou.xml")
+duarouter --net-file "$NET_PATH" \
+          --route-files "$TRIP_PATH" \
+          --output-file "$ROUTE_PATH" \
+          --ignore-errors true
 
-SUMOCFG_FILE="data/sumocfgs/$NAME.sumocfg"
-
-cat > $SUMOCFG_FILE <<EOL
+echo ">=> Generating SUMO configuration file..."
+SUMOCFG_FILE=$(realpath "data/sumocfgs/$NAME.sumocfg")
+cat > "$SUMOCFG_FILE" <<EOL
 <configuration>
     <input>
-        <net-file value="../nets/$NAME.net.xml"/>
-        <route-files value="../routes/$NAME.rou.xml"/>
+        <net-file value="$NET_PATH"/>
+        <route-files value="$ROUTE_PATH"/>
     </input>
     <time>
         <begin value="0"/>
@@ -46,3 +55,6 @@ cat > $SUMOCFG_FILE <<EOL
     </report>
 </configuration>
 EOL
+
+echo "<=> All done!"
+echo "SUMO configuration ready: $SUMOCFG_FILE"
