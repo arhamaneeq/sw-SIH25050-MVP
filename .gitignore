@@ -1,4 +1,6 @@
 .venv/*
 *.ipynb
 .env/*
-data/*.xml
+data/nets/*
+data/routes/*
+data/trips/*
