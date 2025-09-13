@@ -26,3 +26,23 @@ python3 $SUMO_HOME/tools/randomTrips.py \
 duarouter --net-file "data/nets/$NAME.net.xml" \
           --route-files "data/trips/$NAME.trips.xml" \
           --output-file "data/routes/$NAME.rou.xml"
+
+SUMOCFG_FILE="data/sumocfgs/$NAME.sumocfg"
+
+cat > $SUMOCFG_FILE <<EOL
+<configuration>
+    <input>
+        <net-file value="../nets/$NAME.net.xml"/>
+        <route-files value="../routes/$NAME.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+        <step-length value="1.0"/>
+    </time>
+    <report>
+        <verbose value="true"/>
+        <no-step-log value="true"/>
+    </report>
+</configuration>
+EOL
