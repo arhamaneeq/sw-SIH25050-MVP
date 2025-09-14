@@ -1,5 +1,6 @@
 import os
 import traci
+import matplotlib.pyplot as plt
 
 # Ensure SUMO_HOME is set
 if "SUMO_HOME" not in os.environ:
@@ -16,10 +17,20 @@ sumoCmd = ["sumo-gui", "-c", sumocfg, "--log", log_path]
 
 traci.start(sumoCmd)
 
+vehicles = []
+stepsTotal = 3600
+
 # Run simulation loop
 step = 0
-while step < 3600:  # run for 3600 seconds
+while step < stepsTotal:  # run for 3600 seconds
     traci.simulationStep()
+    vehicles.append(traci.vehicle.getIDCount())
     step += 1
 
 traci.close()
+
+plt.plot(range(stepsTotal), vehicles)
+plt.xlabel("Time (s)")
+plt.ylabel("Vehicles in simulation")
+plt.title("Vehicle count over time")
+plt.show()

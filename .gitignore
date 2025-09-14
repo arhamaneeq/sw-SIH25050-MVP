@@ -5,3 +5,5 @@ data/nets/*
 data/routes/*
 data/trips/*
 data/sumocfgs/*
+.venvRL/*
+*.zip
