@@ -1,6 +1,9 @@
 # SIH 25050 (MVP)
 
-> Multi-Agent Traffic Management with Transformers and SUMO
+Multi-Agent Traffic Management with Transformers and SUMO
+
+> [!IMPORTANT]
+> This is NOT a complete project and only meant to showcase a proposed techstack for SIH25050. It contains scripts meant to demonstrate a pipeline integrating CV & IoT information with Open Source Maps to simulate and train a multi-agentic reinforcement learning model.
 
 ## Overview
 
@@ -44,10 +47,12 @@ sw-SIH25050-MVP/
 │   ├── routes/            # Generated routes files (.rou.xml)
 │   └── sumocfgs/          # SUMO configuration files (.sumocfg)
 ├── scripts/
-│   └── osmToSumo.sh       # Script to convert OSM → SUMO network and generate routes
-├── sumo_env.py            # SUMO-based environment class using TraCI
-├── transformer_agent.py   # Transformer-based PPO agent
-├── ppo_trainer.py         # PPO training loop
-├── run_sumo.py            # Main script to train/test the agent
+│   └── osmToSumo.sh       # Script to convert OSM → SUMO network and 
+├── model
+│   ├── computer_vision/
+│   ├── reinforcement_learning/
+│   │   └── RL_traffic.py
+│   ├── simulator/
+│   │   └── sim1.py
 └── README.md
 ```
